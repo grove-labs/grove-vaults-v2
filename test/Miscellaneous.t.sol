@@ -13,35 +13,35 @@ contract MockERC20SixDecimals is MockERC20 {
 
 }
 
-contract SparkVaultInitializeFailureTests is SparkVaultTestBase {
+contract GroveVaultInitializeFailureTests is GroveVaultTestBase {
 
     function test_initialize_alreadyInitialized() public {
         vm.expectRevert(abi.encodeWithSignature("InvalidInitialization()"));
         vault.initialize(
             address(asset),
-            "Spark Savings USDC V2",
-            "spUSDC",
+            "Grove Savings USDC V2",
+            "grUSDC",
             admin
         );
     }
 
 }
 
-contract SparkVaultInitializeSuccessTests is SparkVaultTestBase {
+contract GroveVaultInitializeSuccessTests is GroveVaultTestBase {
 
-    // NOTE: This cannot be part of SparkVaultTestBase, because that is used in a contract where DssTest
+    // NOTE: This cannot be part of GroveVaultTestBase, because that is used in a contract where DssTest
     // is also used (and that also defines RAY).
     uint256 constant internal RAY = 1e27;
 
     function test_initialize_eighteenDecimals() public {
-        // This is from OpenZeppelin's Initializable.sol, which is used in SparkVault.
+        // This is from OpenZeppelin's Initializable.sol, which is used in GroveVault.
         // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Initializable")) - 1)) & ~bytes32(uint256(0xff))
         bytes32 INITIALIZABLE_STORAGE = 0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00;
 
         // Overwrite vault deployment from setUp() to test initialization
-        vault = SparkVault(
+        vault = GroveVault(
             address(new ERC1967Proxy(
-                address(new SparkVault()),
+                address(new GroveVault()),
                 ""
             ))
         );
@@ -68,8 +68,8 @@ contract SparkVaultInitializeSuccessTests is SparkVaultTestBase {
 
         vault.initialize(
             address(asset),
-            "Spark Savings USDS V2",
-            "spUSDS",
+            "Grove Savings USDS V2",
+            "grUSDS",
             admin
         );
 
@@ -83,10 +83,10 @@ contract SparkVaultInitializeSuccessTests is SparkVaultTestBase {
         );
 
         assertEq(vault.asset(),    address(asset));
-        assertEq(vault.name(),     "Spark Savings USDS V2");
+        assertEq(vault.name(),     "Grove Savings USDS V2");
         assertEq(vault.decimals(), IERC20Metadata(address(asset)).decimals());
         assertEq(vault.decimals(), 18);
-        assertEq(vault.symbol(),   "spUSDS");
+        assertEq(vault.symbol(),   "grUSDS");
         assertEq(vault.chi(),      RAY);
         assertEq(vault.rho(),      uint64(block.timestamp));
         assertEq(vault.vsr(),      RAY);
@@ -99,14 +99,14 @@ contract SparkVaultInitializeSuccessTests is SparkVaultTestBase {
     function test_initialize_sixDecimals() public {
         MockERC20SixDecimals sixDecimalsAsset = new MockERC20SixDecimals();
 
-        // This is from OpenZeppelin's Initializable.sol, which is used in SparkVault.
+        // This is from OpenZeppelin's Initializable.sol, which is used in GroveVault.
         // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Initializable")) - 1)) & ~bytes32(uint256(0xff))
         bytes32 INITIALIZABLE_STORAGE = 0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00;
 
         // Overwrite vault deployment from setUp() to test initialization
-        vault = SparkVault(
+        vault = GroveVault(
             address(new ERC1967Proxy(
-                address(new SparkVault()),
+                address(new GroveVault()),
                 ""
             ))
         );
@@ -134,16 +134,16 @@ contract SparkVaultInitializeSuccessTests is SparkVaultTestBase {
 
         vault.initialize(
             address(sixDecimalsAsset),
-            "Spark Savings USDC V2",
-            "spUSDC",
+            "Grove Savings USDC V2",
+            "grUSDC",
             admin
         );
 
         assertEq(vault.asset(),    address(sixDecimalsAsset));
-        assertEq(vault.name(),     "Spark Savings USDC V2");
+        assertEq(vault.name(),     "Grove Savings USDC V2");
         assertEq(vault.decimals(), IERC20Metadata(address(sixDecimalsAsset)).decimals());
         assertEq(vault.decimals(), 6);
-        assertEq(vault.symbol(),   "spUSDC");
+        assertEq(vault.symbol(),   "grUSDC");
         assertEq(vault.chi(),      RAY);
         assertEq(vault.rho(),      uint64(block.timestamp));
         assertEq(vault.vsr(),      RAY);
@@ -153,9 +153,9 @@ contract SparkVaultInitializeSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultConvenienceViewFunctionTests is SparkVaultTestBase {
+contract GroveVaultConvenienceViewFunctionTests is GroveVaultTestBase {
 
-    // NOTE: This cannot be part of SparkVaultTestBase, because that is used in a contract where DssTest
+    // NOTE: This cannot be part of GroveVaultTestBase, because that is used in a contract where DssTest
     // is also used (and that also defines RAY).
     uint256 constant internal RAY = 1e27;
 

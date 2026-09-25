@@ -21,7 +21,7 @@ import { IAccessControlEnumerable } from "openzeppelin-contracts/contracts/acces
 import { IERC4626 }                 from "openzeppelin-contracts/contracts/interfaces/IERC4626.sol";
 import { IERC20Permit }             from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Permit.sol";
 
-interface ISparkVault is IERC20Permit, IERC4626, IAccessControlEnumerable {
+interface IGroveVault is IERC20Permit, IERC4626, IAccessControlEnumerable {
 
     /**
      * @notice Emitted every time drip() is called.

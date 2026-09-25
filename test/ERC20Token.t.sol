@@ -5,7 +5,7 @@ import { TokenFuzzChecks } from "lib/token-tests/src/TokenFuzzChecks.sol";
 
 import "./TestBase.t.sol";
 
-contract ERC20TokenTests is SparkVaultTestBase, TokenFuzzChecks {
+contract ERC20TokenTests is GroveVaultTestBase, TokenFuzzChecks {
 
     function setUp() public override {
         super.setUp();
@@ -15,7 +15,7 @@ contract ERC20TokenTests is SparkVaultTestBase, TokenFuzzChecks {
     }
 
     function testERC20() public {
-        checkBulkERC20(address(vault), "SparkVault", "Spark Savings USDC V2", "spUSDC", "1", 18);
+        checkBulkERC20(address(vault), "GroveVault", "Grove Savings USDC V2", "grUSDC", "1", 18);
     }
 
     function testERC20Fuzz(uint256 amount1, uint256 amount2, uint256 vsr, uint256 warpTime) public {
@@ -31,7 +31,7 @@ contract ERC20TokenTests is SparkVaultTestBase, TokenFuzzChecks {
 
         checkBulkERC20Fuzz({
             _token        : address(vault),
-            _contractName : "SparkVault",
+            _contractName : "GroveVault",
             from          : makeAddr("from"),
             to            : makeAddr("to"),
             amount1       : amount1,
@@ -40,7 +40,7 @@ contract ERC20TokenTests is SparkVaultTestBase, TokenFuzzChecks {
     }
 
     function testPermit() public {
-        checkBulkPermit(address(vault), "SparkVault");
+        checkBulkPermit(address(vault), "GroveVault");
     }
 
     function testPermitFuzz(
@@ -57,7 +57,7 @@ contract ERC20TokenTests is SparkVaultTestBase, TokenFuzzChecks {
 
         checkBulkPermitFuzz({
             _token        : address(vault),
-            _contractName : "SparkVault",
+            _contractName : "GroveVault",
             privKey       : privateKey,
             to            : makeAddr("to"),
             amount        : amount,

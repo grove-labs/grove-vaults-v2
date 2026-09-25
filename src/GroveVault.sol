@@ -11,7 +11,7 @@ import { AccessControlEnumerableUpgradeable }
 
 import { UUPSUpgradeable } from "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
 
-import { ISparkVault } from "./ISparkVault.sol";
+import { IGroveVault } from "./IGroveVault.sol";
 
 interface IERC1271 {
     function isValidSignature(bytes32, bytes memory) external view returns (bytes4);
@@ -19,19 +19,19 @@ interface IERC1271 {
 
 /*
 
-  ███████╗██████╗  █████╗ ██████╗ ██╗  ██╗    ██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
-  ██╔════╝██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝    ██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
-  ███████╗██████╔╝███████║██████╔╝█████╔╝     ██║   ██║███████║██║   ██║██║     ██║
-  ╚════██║██╔═══╝ ██╔══██║██╔══██╗██╔═██╗     ╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║
-  ███████║██║     ██║  ██║██║  ██║██║  ██╗     ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║
-  ╚══════╝╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝      ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝
+   ██████╗ ██████╗  ██████╗ ██╗   ██╗███████╗    ██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
+  ██╔════╝ ██╔══██╗██╔═══██╗██║   ██║██╔════╝    ██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
+  ██║  ███╗██████╔╝██║   ██║██║   ██║█████╗      ██║   ██║███████║██║   ██║██║     ██║
+  ██║   ██║██╔══██╗██║   ██║╚██╗ ██╔╝██╔══╝      ╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║
+  ╚██████╔╝██║  ██║╚██████╔╝ ╚████╔╝ ███████╗     ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║
+   ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   ╚═══╝  ╚══════╝      ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝
 
 */
 
 /// @dev If the inheritance is updated, the functions in `initialize` must be updated as well.
 ///      Last updated for: `Initializable, UUPSUpgradeable, AccessControlEnumerableUpgradeable,
-///      ISparkVault`.
-contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISparkVault {
+///      IGroveVault`.
+contract GroveVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, IGroveVault {
 
     /**********************************************************************************************/
     /*** Constants                                                                              ***/
@@ -118,9 +118,9 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
     }
 
     function setVsrBounds(uint256 minVsr_, uint256 maxVsr_) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(minVsr_ >= RAY,     "SparkVault/vsr-too-low");
-        require(maxVsr_ <= MAX_VSR, "SparkVault/vsr-too-high");
-        require(minVsr_ <= maxVsr_, "SparkVault/min-vsr-gt-max-vsr");
+        require(minVsr_ >= RAY,     "GroveVault/vsr-too-low");
+        require(maxVsr_ <= MAX_VSR, "GroveVault/vsr-too-high");
+        require(minVsr_ <= maxVsr_, "GroveVault/min-vsr-gt-max-vsr");
 
         emit VsrBoundsSet(minVsr, maxVsr, minVsr_, maxVsr_);
 
@@ -129,8 +129,8 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
     }
 
     function setVsr(uint256 newVsr) external onlyRole(SETTER_ROLE) {
-        require(newVsr >= minVsr, "SparkVault/vsr-too-low");
-        require(newVsr <= maxVsr, "SparkVault/vsr-too-high");
+        require(newVsr >= minVsr, "GroveVault/vsr-too-low");
+        require(newVsr <= maxVsr, "GroveVault/vsr-too-high");
 
         drip();
         uint256 vsr_ = vsr;
@@ -179,9 +179,9 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
     }
 
     function transfer(address to, uint256 value) external returns (bool) {
-        require(to != address(0) && to != address(this), "SparkVault/invalid-address");
+        require(to != address(0) && to != address(this), "GroveVault/invalid-address");
         uint256 balance = balanceOf[msg.sender];
-        require(balance >= value, "SparkVault/insufficient-balance");
+        require(balance >= value, "GroveVault/insufficient-balance");
 
         // NOTE: Don't need an overflow check here b/c sum of all balances == totalSupply
         unchecked {
@@ -195,14 +195,14 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
     }
 
     function transferFrom(address from, address to, uint256 value) external returns (bool) {
-        require(to != address(0) && to != address(this), "SparkVault/invalid-address");
+        require(to != address(0) && to != address(this), "GroveVault/invalid-address");
         uint256 balance = balanceOf[from];
-        require(balance >= value, "SparkVault/insufficient-balance");
+        require(balance >= value, "GroveVault/insufficient-balance");
 
         if (from != msg.sender) {
             uint256 allowed = allowance[from][msg.sender];
             if (allowed != type(uint256).max) {
-                require(allowed >= value, "SparkVault/insufficient-allowance");
+                require(allowed >= value, "GroveVault/insufficient-allowance");
 
                 unchecked {
                     allowance[from][msg.sender] = allowed - value;
@@ -232,8 +232,8 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
         uint256 deadline,
         bytes memory signature
     ) public {
-        require(block.timestamp <= deadline, "SparkVault/permit-expired");
-        require(owner != address(0),         "SparkVault/invalid-owner");
+        require(block.timestamp <= deadline, "GroveVault/permit-expired");
+        require(owner != address(0),         "GroveVault/invalid-owner");
 
         uint256 nonce;
         unchecked { nonce = nonces[owner]++; }
@@ -252,7 +252,7 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
                 ))
             ));
 
-        require(_isValidSignature(owner, digest, signature), "SparkVault/invalid-permit");
+        require(_isValidSignature(owner, digest, signature), "GroveVault/invalid-permit");
 
         allowance[owner][spender] = value;
         emit Approval(owner, spender, value);
@@ -369,14 +369,14 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
         amount = convertToAssets(shares);
         require(
             IERC20(asset).balanceOf(address(this)) >= amount,
-            "SparkVault/insufficient-liquidity"
+            "GroveVault/insufficient-liquidity"
         );
     }
 
     function previewWithdraw(uint256 assets) external view returns (uint256) {
         require(
             IERC20(asset).balanceOf(address(this)) >= assets,
-            "SparkVault/insufficient-liquidity"
+            "GroveVault/insufficient-liquidity"
         );
         return _divup(assets * RAY, nowChi());
     }
@@ -413,12 +413,12 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
 
     function _burn(uint256 assets, uint256 shares, address receiver, address owner) internal {
         uint256 balance = balanceOf[owner];
-        require(balance >= shares, "SparkVault/insufficient-balance");
+        require(balance >= shares, "GroveVault/insufficient-balance");
 
         if (owner != msg.sender) {
             uint256 allowed = allowance[owner][msg.sender];
             if (allowed != type(uint256).max) {
-                require(allowed >= shares, "SparkVault/insufficient-allowance");
+                require(allowed >= shares, "GroveVault/insufficient-allowance");
 
                 unchecked {
                     allowance[owner][msg.sender] = allowed - shares;
@@ -440,14 +440,14 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
     }
 
     function _mint(uint256 assets, uint256 shares, address receiver) internal {
-        require(receiver != address(0) && receiver != address(this), "SparkVault/invalid-address");
+        require(receiver != address(0) && receiver != address(this), "GroveVault/invalid-address");
 
         require(
             !hasRole(TAKER_ROLE, msg.sender) && !hasRole(TAKER_ROLE, receiver),
-            "SparkVault/taker-cannot-deposit"
+            "GroveVault/taker-cannot-deposit"
         );
 
-        require(totalAssets() + assets <= depositCap, "SparkVault/deposit-cap-exceeded");
+        require(totalAssets() + assets <= depositCap, "GroveVault/deposit-cap-exceeded");
 
         _pullAsset(msg.sender, assets);
 
@@ -469,7 +469,7 @@ contract SparkVault is AccessControlEnumerableUpgradeable, UUPSUpgradeable, ISpa
     function _pushAsset(address to, uint256 value) internal {
         require(
             value <= IERC20(asset).balanceOf(address(this)),
-            "SparkVault/insufficient-liquidity"
+            "GroveVault/insufficient-liquidity"
         );
         SafeERC20.safeTransfer(IERC20(asset), to, value);
     }

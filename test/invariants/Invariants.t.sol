@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.25;
 
-import { SparkVaultInvariantTestBase } from "./InvariantsBase.t.sol";
+import { GroveVaultInvariantTestBase } from "./InvariantsBase.t.sol";
 
 import { AdminHandler }    from "./handlers/AdminHandler.sol";
 import { ExternalHandler } from "./handlers/ExternalHandler.sol";
 import { UserHandler }     from "./handlers/UserHandler.sol";
 
-contract SparkVaultInvariantTest is SparkVaultInvariantTestBase {
+contract GroveVaultInvariantTest is GroveVaultInvariantTestBase {
 
     function setUp() public override {
         super.setUp();

@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 import "./TestBase.t.sol";
 
-contract SparkVaultSetVsrBoundsFailureTests is SparkVaultTestBase {
+contract GroveVaultSetVsrBoundsFailureTests is GroveVaultTestBase {
 
     function test_setVsrBounds_notAdmin() public {
         vm.expectRevert(abi.encodeWithSignature(
@@ -16,7 +16,7 @@ contract SparkVaultSetVsrBoundsFailureTests is SparkVaultTestBase {
 
     function test_setVsrBounds_belowRayBoundary() public {
         vm.startPrank(admin);
-        vm.expectRevert("SparkVault/vsr-too-low");
+        vm.expectRevert("GroveVault/vsr-too-low");
         vault.setVsrBounds(1e27 - 1, FOUR_PCT_VSR);
 
         vault.setVsrBounds(1e27, FOUR_PCT_VSR);
@@ -24,7 +24,7 @@ contract SparkVaultSetVsrBoundsFailureTests is SparkVaultTestBase {
 
     function test_setVsrBounds_aboveMaxVsrBoundary() public {
         vm.startPrank(admin);
-        vm.expectRevert("SparkVault/vsr-too-high");
+        vm.expectRevert("GroveVault/vsr-too-high");
         vault.setVsrBounds(1e27, MAX_VSR + 1);
 
         vault.setVsrBounds(1e27, MAX_VSR);
@@ -32,7 +32,7 @@ contract SparkVaultSetVsrBoundsFailureTests is SparkVaultTestBase {
 
     function test_setVsrBounds_minVsrGtMaxVsrBoundary() public {
         vm.startPrank(admin);
-        vm.expectRevert("SparkVault/min-vsr-gt-max-vsr");
+        vm.expectRevert("GroveVault/min-vsr-gt-max-vsr");
         vault.setVsrBounds(FOUR_PCT_VSR + 1, FOUR_PCT_VSR);
 
         vault.setVsrBounds(FOUR_PCT_VSR, FOUR_PCT_VSR);
@@ -40,7 +40,7 @@ contract SparkVaultSetVsrBoundsFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultSetVsrBoundsSuccessTests is SparkVaultTestBase {
+contract GroveVaultSetVsrBoundsSuccessTests is GroveVaultTestBase {
 
     event VsrBoundsSet(uint256 oldMinVsr, uint256 oldMaxVsr, uint256 newMinVsr, uint256 newMaxVsr);
 
@@ -59,7 +59,7 @@ contract SparkVaultSetVsrBoundsSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultGrantRoleFailureTests is SparkVaultTestBase {
+contract GroveVaultGrantRoleFailureTests is GroveVaultTestBase {
 
     function test_grantRole_notAdmin() public {
         bytes32[] memory roles = new bytes32[](3);
@@ -80,7 +80,7 @@ contract SparkVaultGrantRoleFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultGrantRoleSuccessTests is SparkVaultTestBase {
+contract GroveVaultGrantRoleSuccessTests is GroveVaultTestBase {
 
     event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);
     event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);
@@ -114,7 +114,7 @@ contract SparkVaultGrantRoleSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultRevokeRoleFailureTests is SparkVaultTestBase {
+contract GroveVaultRevokeRoleFailureTests is GroveVaultTestBase {
 
     function test_revokeRole_notAdmin() public {
         bytes32[] memory roles = new bytes32[](3);
@@ -135,7 +135,7 @@ contract SparkVaultRevokeRoleFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultRevokeRoleSuccessTests is SparkVaultGrantRoleSuccessTests {
+contract GroveVaultRevokeRoleSuccessTests is GroveVaultGrantRoleSuccessTests {
 
     function test_revokeRole() public {
         bytes32[] memory roles = new bytes32[](3);
@@ -168,7 +168,7 @@ contract SparkVaultRevokeRoleSuccessTests is SparkVaultGrantRoleSuccessTests {
 
 }
 
-contract SparkVaultSetDepositCapFailureTests is SparkVaultTestBase {
+contract GroveVaultSetDepositCapFailureTests is GroveVaultTestBase {
 
     function test_setDepositCap_notAdmin() public {
         vm.expectRevert(abi.encodeWithSignature(
@@ -181,7 +181,7 @@ contract SparkVaultSetDepositCapFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultSetDepositCapSuccessTests is SparkVaultTestBase {
+contract GroveVaultSetDepositCapSuccessTests is GroveVaultTestBase {
 
     event DepositCapSet(uint256 oldCap, uint256 newCap);
 
@@ -211,14 +211,14 @@ contract SparkVaultSetDepositCapSuccessTests is SparkVaultTestBase {
         vm.startPrank(randomUser);
         deal(address(asset), randomUser, 1);
         asset.approve(address(vault), 1);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.deposit(1, randomUser);
         vm.stopPrank();
     }
 
 }
 
-contract SparkVaultSetVsrFailureTests is SparkVaultTestBase {
+contract GroveVaultSetVsrFailureTests is GroveVaultTestBase {
 
     function test_setVsr_notSetter() public {
         vm.expectRevert(abi.encodeWithSignature(
@@ -231,7 +231,7 @@ contract SparkVaultSetVsrFailureTests is SparkVaultTestBase {
 
     function test_setVsr_belowMinVsrBoundary() public {
         vm.startPrank(setter);
-        vm.expectRevert("SparkVault/vsr-too-low");
+        vm.expectRevert("GroveVault/vsr-too-low");
         vault.setVsr(1e27 - 1);
 
         vault.setVsr(1e27);  // Min is 1e27 on deployment
@@ -242,7 +242,7 @@ contract SparkVaultSetVsrFailureTests is SparkVaultTestBase {
         vault.setVsrBounds(ONE_PCT_VSR, FOUR_PCT_VSR);
 
         vm.startPrank(setter);
-        vm.expectRevert("SparkVault/vsr-too-low");
+        vm.expectRevert("GroveVault/vsr-too-low");
         vault.setVsr(ONE_PCT_VSR - 1);
 
         vault.setVsr(ONE_PCT_VSR);
@@ -250,7 +250,7 @@ contract SparkVaultSetVsrFailureTests is SparkVaultTestBase {
 
     function test_setVsr_aboveMaxVsrBoundary() public {
         vm.startPrank(setter);
-        vm.expectRevert("SparkVault/vsr-too-high");
+        vm.expectRevert("GroveVault/vsr-too-high");
         vault.setVsr(1e27 + 1);  // Can't set VSR until admin sets bounds
 
         vault.setVsr(1e27);  // Max is 1e27 on deployment
@@ -261,7 +261,7 @@ contract SparkVaultSetVsrFailureTests is SparkVaultTestBase {
         vault.setVsrBounds(ONE_PCT_VSR, FOUR_PCT_VSR);
 
         vm.startPrank(setter);
-        vm.expectRevert("SparkVault/vsr-too-high");
+        vm.expectRevert("GroveVault/vsr-too-high");
         vault.setVsr(FOUR_PCT_VSR + 1);
 
         vault.setVsr(FOUR_PCT_VSR);
@@ -269,7 +269,7 @@ contract SparkVaultSetVsrFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultSetVsrSuccessTests is SparkVaultTestBase {
+contract GroveVaultSetVsrSuccessTests is GroveVaultTestBase {
 
     event Drip(uint256 nChi, uint256 diff);
     event VsrSet(address sender, uint256 oldVsr, uint256 newVsr);
@@ -308,7 +308,7 @@ contract SparkVaultSetVsrSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultTakeFailureTests is SparkVaultTestBase {
+contract GroveVaultTakeFailureTests is GroveVaultTestBase {
 
     function test_take_notTaker() public {
         vm.expectRevert(abi.encodeWithSignature(
@@ -331,7 +331,7 @@ contract SparkVaultTakeFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultTakeSuccessTests is SparkVaultTestBase {
+contract GroveVaultTakeSuccessTests is GroveVaultTestBase {
 
     function test_take() public {
         deal(address(asset), address(vault), 1_000_000e6);

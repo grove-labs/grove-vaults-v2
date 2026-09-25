@@ -3,15 +3,15 @@ pragma solidity ^0.8.25;
 
 import { ERC4626Test } from "erc4626-tests/ERC4626.test.sol";
 
-import { SparkVaultTestBase } from "./TestBase.t.sol";
+import { GroveVaultTestBase } from "./TestBase.t.sol";
 
-contract SparkVaultERC4626StandardTest is ERC4626Test, SparkVaultTestBase {
+contract GroveVaultERC4626StandardTest is ERC4626Test, GroveVaultTestBase {
 
-    // NOTE: This cannot be part of SparkVaultTestBase, because that is used in a contract where DssTest
+    // NOTE: This cannot be part of GroveVaultTestBase, because that is used in a contract where DssTest
     // is also used (and that also defines RAY).
     uint256 constant internal RAY = 1e27;
 
-    function setUp() public virtual override(ERC4626Test, SparkVaultTestBase) {
+    function setUp() public virtual override(ERC4626Test, GroveVaultTestBase) {
         super.setUp();
 
         // For the purposes of this test, set unlimited deposit cap
@@ -82,7 +82,7 @@ contract SparkVaultERC4626StandardTest is ERC4626Test, SparkVaultTestBase {
 
 }
 
-contract SparkVaultERC4626Test is SparkVaultTestBase {
+contract GroveVaultERC4626Test is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
     address user2 = makeAddr("user2");
@@ -130,7 +130,7 @@ contract SparkVaultERC4626Test is SparkVaultTestBase {
         vault.take(1);
 
         // Redeem should revert over the liquidity boundary
-        vm.expectRevert("SparkVault/insufficient-liquidity");
+        vm.expectRevert("GroveVault/insufficient-liquidity");
         vault.previewRedeem(shares);
 
         // Transfer liquidity back to the vault
@@ -153,7 +153,7 @@ contract SparkVaultERC4626Test is SparkVaultTestBase {
         vm.prank(taker);
         vault.take(1);
 
-        vm.expectRevert("SparkVault/insufficient-liquidity");
+        vm.expectRevert("GroveVault/insufficient-liquidity");
         vault.previewWithdraw(assets);
 
         // Transfer liquidity back to the vault
@@ -374,30 +374,30 @@ contract SparkVaultERC4626Test is SparkVaultTestBase {
 
 }
 
-contract SparkVaultDepositFailureTests is SparkVaultTestBase {
+contract GroveVaultDepositFailureTests is GroveVaultTestBase {
 
     function test_deposit_revertsReceiverZeroAddress() public {
         uint256 amount = 1_000_000e6;
-        vm.expectRevert("SparkVault/invalid-address");
+        vm.expectRevert("GroveVault/invalid-address");
         vault.deposit(amount, address(0));
     }
 
     function test_deposit_revertsReceiverVault() public {
         uint256 amount = 1_000_000e6;
-        vm.expectRevert("SparkVault/invalid-address");
+        vm.expectRevert("GroveVault/invalid-address");
         vault.deposit(amount, address(vault));
     }
 
     function test_deposit_revertsSenderTaker() public {
         uint256 amount = 1_000_000e6;
-        vm.expectRevert("SparkVault/taker-cannot-deposit");
+        vm.expectRevert("GroveVault/taker-cannot-deposit");
         vm.prank(taker);
         vault.deposit(amount, makeAddr("randomUser"));
     }
 
     function test_deposit_revertsReceiverTaker() public {
         uint256 amount = 1_000_000e6;
-        vm.expectRevert("SparkVault/taker-cannot-deposit");
+        vm.expectRevert("GroveVault/taker-cannot-deposit");
         vault.deposit(amount, taker);
     }
 
@@ -409,7 +409,7 @@ contract SparkVaultDepositFailureTests is SparkVaultTestBase {
         // Deposit exceeding the cap should revert
         vm.startPrank(user1);
         asset.approve(address(vault), 1_000_000e6 + 1);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.deposit(1_000_000e6 + 1, user1);
         vm.stopPrank();
 
@@ -420,7 +420,7 @@ contract SparkVaultDepositFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultDepositSuccessTests is SparkVaultTestBase {
+contract GroveVaultDepositSuccessTests is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
@@ -461,30 +461,30 @@ contract SparkVaultDepositSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultMintFailureTests is SparkVaultTestBase {
+contract GroveVaultMintFailureTests is GroveVaultTestBase {
 
     function test_mint_revertsReceiverZeroAddress() public {
         uint256 shares = 1_000_000e6;
-        vm.expectRevert("SparkVault/invalid-address");
+        vm.expectRevert("GroveVault/invalid-address");
         vault.mint(shares, address(0));
     }
 
     function test_mint_revertsReceiverVault() public {
         uint256 shares = 1_000_000e6;
-        vm.expectRevert("SparkVault/invalid-address");
+        vm.expectRevert("GroveVault/invalid-address");
         vault.mint(shares, address(vault));
     }
 
     function test_mint_revertsSenderTaker() public {
         uint256 shares = 1_000_000e6;
-        vm.expectRevert("SparkVault/taker-cannot-deposit");
+        vm.expectRevert("GroveVault/taker-cannot-deposit");
         vm.prank(taker);
         vault.mint(shares, makeAddr("randomUser"));
     }
 
     function test_mint_revertsReceiverTaker() public {
         uint256 shares = 1_000_000e6;
-        vm.expectRevert("SparkVault/taker-cannot-deposit");
+        vm.expectRevert("GroveVault/taker-cannot-deposit");
         vault.mint(shares, taker);
     }
 
@@ -496,7 +496,7 @@ contract SparkVaultMintFailureTests is SparkVaultTestBase {
         // Mint exceeding the cap should revert
         vm.startPrank(user1);
         asset.approve(address(vault), 1_000_000e6 + 1);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.mint(1_000_000e6 + 1, user1);
         vm.stopPrank();
 
@@ -507,7 +507,7 @@ contract SparkVaultMintFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultMintSuccessTests is SparkVaultTestBase {
+contract GroveVaultMintSuccessTests is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
@@ -548,7 +548,7 @@ contract SparkVaultMintSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultWithdrawFailureTests is SparkVaultTestBase {
+contract GroveVaultWithdrawFailureTests is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
@@ -581,7 +581,7 @@ contract SparkVaultWithdrawFailureTests is SparkVaultTestBase {
 
         // Withdraw more than assets should revert
         vm.prank(user1);
-        vm.expectRevert("SparkVault/insufficient-balance");
+        vm.expectRevert("GroveVault/insufficient-balance");
         vault.withdraw(assets + 1, user1, user1);
 
         // Withdrawing assets should succeed
@@ -602,7 +602,7 @@ contract SparkVaultWithdrawFailureTests is SparkVaultTestBase {
         vault.approve(randomUser, shares - 1);
 
         vm.prank(randomUser);
-        vm.expectRevert("SparkVault/insufficient-allowance");
+        vm.expectRevert("GroveVault/insufficient-allowance");
         vault.withdraw(assets, randomUser, user1);
 
         vm.prank(user1);
@@ -614,7 +614,7 @@ contract SparkVaultWithdrawFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultWithdrawSuccessTests is SparkVaultTestBase {
+contract GroveVaultWithdrawSuccessTests is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
@@ -721,7 +721,7 @@ contract SparkVaultWithdrawSuccessTests is SparkVaultTestBase {
         deal(address(asset), user1, 1);
         vm.prank(user1);
         asset.approve(address(vault), 1);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.deposit(1, user1);
 
         // Withdraw should still succeed
@@ -738,7 +738,7 @@ contract SparkVaultWithdrawSuccessTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultRedeemFailureTests is SparkVaultTestBase {
+contract GroveVaultRedeemFailureTests is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
@@ -773,7 +773,7 @@ contract SparkVaultRedeemFailureTests is SparkVaultTestBase {
 
         // Redeem more than shares should revert
         vm.prank(user1);
-        vm.expectRevert("SparkVault/insufficient-balance");
+        vm.expectRevert("GroveVault/insufficient-balance");
         vault.redeem(shares + 1, user1, user1);
 
         vm.prank(user1);
@@ -796,7 +796,7 @@ contract SparkVaultRedeemFailureTests is SparkVaultTestBase {
         vault.approve(randomUser, shares - 1);
 
         vm.prank(randomUser);
-        vm.expectRevert("SparkVault/insufficient-allowance");
+        vm.expectRevert("GroveVault/insufficient-allowance");
         vault.redeem(shares, randomUser, user1);
 
         vm.prank(user1);
@@ -808,7 +808,7 @@ contract SparkVaultRedeemFailureTests is SparkVaultTestBase {
 
 }
 
-contract SparkVaultRedeemSuccessTests is SparkVaultTestBase {
+contract GroveVaultRedeemSuccessTests is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
@@ -924,7 +924,7 @@ contract SparkVaultRedeemSuccessTests is SparkVaultTestBase {
         deal(address(asset), user1, assetAmount);
         vm.prank(user1);
         asset.approve(address(vault), assetAmount);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.mint(1, user1);
 
         // Redeem should still succeed
