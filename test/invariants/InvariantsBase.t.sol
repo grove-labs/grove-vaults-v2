@@ -5,11 +5,11 @@ import { AdminHandler }    from "./handlers/AdminHandler.sol";
 import { ExternalHandler } from "./handlers/ExternalHandler.sol";
 import { UserHandler }     from "./handlers/UserHandler.sol";
 
-import { SparkVaultTestBase } from "../TestBase.t.sol";
+import { GroveVaultTestBase } from "../TestBase.t.sol";
 
-contract SparkVaultInvariantTestBase is SparkVaultTestBase {
+contract GroveVaultInvariantTestBase is GroveVaultTestBase {
 
-    // NOTE: This cannot be part of SparkVaultTestBase, because that is used in a contract where DssTest
+    // NOTE: This cannot be part of GroveVaultTestBase, because that is used in a contract where DssTest
     // is also used (and that also defines RAY).
     uint256 constant public RAY = 1e27;
 
@@ -45,7 +45,7 @@ contract SparkVaultInvariantTestBase is SparkVaultTestBase {
         deal(address(asset), user, maxDeposit + 2);
 
         vm.startPrank(user);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.deposit(maxDeposit + 2, user);
 
         vault.deposit(maxDeposit, user);
@@ -62,7 +62,7 @@ contract SparkVaultInvariantTestBase is SparkVaultTestBase {
         deal(address(asset), user, vault.convertToAssets(maxMint + 2));
 
         vm.startPrank(user);
-        vm.expectRevert("SparkVault/deposit-cap-exceeded");
+        vm.expectRevert("GroveVault/deposit-cap-exceeded");
         vault.mint(maxMint + 2, user);
         vault.mint(maxMint, user);
         vm.stopPrank();
@@ -76,7 +76,7 @@ contract SparkVaultInvariantTestBase is SparkVaultTestBase {
         uint256 maxRedeem = vault.maxRedeem(user);
 
         vm.startPrank(user);
-        vm.expectRevert();  // SparkVault/insufficient-balance || SparkVault/insufficient-liquidity
+        vm.expectRevert();  // GroveVault/insufficient-balance || GroveVault/insufficient-liquidity
         vault.redeem(maxRedeem + 2, user, user);
         vault.redeem(maxRedeem,     user, user);
         vm.stopPrank();
@@ -90,7 +90,7 @@ contract SparkVaultInvariantTestBase is SparkVaultTestBase {
         uint256 maxWithdraw = vault.maxWithdraw(user);
 
         vm.startPrank(user);
-        vm.expectRevert();  // SparkVault/insufficient-balance || SparkVault/insufficient-liquidity
+        vm.expectRevert();  // GroveVault/insufficient-balance || GroveVault/insufficient-liquidity
         vault.withdraw(maxWithdraw + 2, user, user);
         vault.withdraw(maxWithdraw,     user, user);
         vm.stopPrank();

@@ -5,9 +5,9 @@ import { stdError } from "forge-std/Test.sol";
 
 import "./TestBase.t.sol";
 
-import { SparkVault } from "src/SparkVault.sol";
+import { GroveVault } from "src/GroveVault.sol";
 
-contract SparkVaultHarness is SparkVault {
+contract GroveVaultHarness is GroveVault {
 
     function divup(uint256 x, uint256 y) public pure returns (uint256) {
         return super._divup(x, y);
@@ -22,10 +22,10 @@ contract SparkVaultHarness is SparkVault {
 contract MathTestBase is Test {
 
     // NOTE: Don't need to use upgradability pattern because of pure functions
-    SparkVaultHarness harness;
+    GroveVaultHarness harness;
 
     function setUp() public {
-        harness = new SparkVaultHarness();
+        harness = new GroveVaultHarness();
     }
 
 }

@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 import "./TestBase.t.sol";
 
-contract InvalidSparkVault1 {
+contract InvalidGroveVault1 {
 
     function proxiableUUID() external pure returns (bytes32) {
         return bytes32(0);
@@ -11,9 +11,9 @@ contract InvalidSparkVault1 {
 
 }
 
-contract InvalidSparkVault2 {}
+contract InvalidGroveVault2 {}
 
-contract SparkVaultUpgradeFailureTest is SparkVaultTestBase {
+contract GroveVaultUpgradeFailureTest is GroveVaultTestBase {
 
     function test_upgradeToAndCall_notAdmin() public {
         vm.expectRevert(abi.encodeWithSignature(
@@ -25,7 +25,7 @@ contract SparkVaultUpgradeFailureTest is SparkVaultTestBase {
     }
 
     function test_upgradeToAndCall_implementationUUIDNotSupported() public {
-        address invalidImplementation = address(new InvalidSparkVault1());
+        address invalidImplementation = address(new InvalidGroveVault1());
 
         vm.prank(admin);
         vm.expectRevert(abi.encodeWithSignature(
@@ -36,7 +36,7 @@ contract SparkVaultUpgradeFailureTest is SparkVaultTestBase {
     }
 
     function test_upgradeToAndCall_implementationHasNoUUID() public {
-        address invalidImplementation = address(new InvalidSparkVault2());
+        address invalidImplementation = address(new InvalidGroveVault2());
 
         vm.prank(admin);
         vm.expectRevert(abi.encodeWithSignature(
@@ -48,11 +48,11 @@ contract SparkVaultUpgradeFailureTest is SparkVaultTestBase {
 
 }
 
-contract SparkVaultUpgradeTest is SparkVaultTestBase {
+contract GroveVaultUpgradeTest is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
 
-    SparkVault newVaultImplementation;
+    GroveVault newVaultImplementation;
 
     uint256 setVsrTimestamp;
 
@@ -60,7 +60,7 @@ contract SparkVaultUpgradeTest is SparkVaultTestBase {
     function setUp() public override {
         super.setUp();
 
-        newVaultImplementation = new SparkVault();
+        newVaultImplementation = new GroveVault();
 
         vm.prank(admin);
         vault.setVsrBounds(ONE_PCT_VSR, FOUR_PCT_VSR);
@@ -83,8 +83,8 @@ contract SparkVaultUpgradeTest is SparkVaultTestBase {
     // Check initial state and that no state changes
     function test_upgradeToAndCall() public {
         assertEq(vault.asset(),    address(asset));
-        assertEq(vault.name(),     "Spark Savings USDC V2");
-        assertEq(vault.symbol(),   "spUSDC");
+        assertEq(vault.name(),     "Grove Savings USDC V2");
+        assertEq(vault.symbol(),   "grUSDC");
         assertEq(vault.decimals(), 18);
 
         assertEq(vault.minVsr(), ONE_PCT_VSR);
@@ -120,8 +120,8 @@ contract SparkVaultUpgradeTest is SparkVaultTestBase {
         vault.upgradeToAndCall(address(newVaultImplementation), "");
 
         assertEq(vault.asset(),    address(asset));
-        assertEq(vault.name(),     "Spark Savings USDC V2");
-        assertEq(vault.symbol(),   "spUSDC");
+        assertEq(vault.name(),     "Grove Savings USDC V2");
+        assertEq(vault.symbol(),   "grUSDC");
         assertEq(vault.decimals(), 18);
 
         assertEq(vault.minVsr(), ONE_PCT_VSR);

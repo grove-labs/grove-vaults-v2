@@ -5,7 +5,7 @@ import "./TestBase.t.sol";
 
 import "forge-std/console2.sol";
 
-contract ValueAccrualE2ETest is SparkVaultTestBase {
+contract ValueAccrualE2ETest is GroveVaultTestBase {
 
     address user1 = makeAddr("user1");
     address user2 = makeAddr("user2");
@@ -182,7 +182,7 @@ contract ValueAccrualE2ETest is SparkVaultTestBase {
         assertEq(vault.assetsOf(user2), 1_010_000e6 - 1);
 
         vm.startPrank(user2);
-        vm.expectRevert("SparkVault/insufficient-liquidity");
+        vm.expectRevert("GroveVault/insufficient-liquidity");
         vault.withdraw(maxWithdraw + 1, user2, user2);
 
         vault.withdraw(maxWithdraw, user2, user2);

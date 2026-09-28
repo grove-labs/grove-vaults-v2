@@ -8,9 +8,9 @@ import { ScriptTools } from "dss-test/ScriptTools.sol";
 import { ERC1967Proxy }   from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import { IERC20Metadata } from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
-import { SparkVault } from "src/SparkVault.sol";
+import { GroveVault } from "src/GroveVault.sol";
 
-contract DeploySparkVaultImpl is Script {
+contract DeployGroveVaultImpl is Script {
 
     using ScriptTools for string;
     using stdJson     for string;
@@ -22,15 +22,15 @@ contract DeploySparkVaultImpl is Script {
         // script` manually
         // vm.createSelectFork(getChain("mainnet").rpcUrl);
 
-        // Deploy SparkVault implementation
+        // Deploy GroveVault implementation
         vm.startBroadcast();
         // NOTE: By itself, the Vault has nobody in a privileged role, depositCap and vsr are 0 and
         // initializers are disabled (`constructor() { _disableInitializers(); }`). It is not
         // possible for an outside party to interact with this contract in any way.
-        address impl = address(new SparkVault());
+        address impl = address(new GroveVault());
         vm.stopBroadcast();
 
-        console2.log("Deployed SparkVault implementation:");
+        console2.log("Deployed GroveVault implementation:");
         console2.log("  impl: ",            impl);
         console2.log("  block.chainId: ",   block.chainid);
         console2.log("  block.timestamp: ", block.timestamp);
@@ -39,19 +39,19 @@ contract DeploySparkVaultImpl is Script {
 
 }
 
-contract DeploySparkVaultProxy is Script {
+contract DeployGroveVaultProxy is Script {
 
     using ScriptTools for string;
     using stdJson     for string;
 
-    address impl  = vm.envAddress("SPARK_VAULT_IMPL");
+    address impl  = vm.envAddress("GROVE_VAULT_IMPL");
 
     function run() public {
         vm.setEnv("FOUNDRY_EXPORTS_OVERWRITE_LATEST", "true");
 
         // Read config
-        string memory chainName = vm.envString("SPARK_VAULT_CHAIN_NAME");
-        string memory assetName = vm.envString("SPARK_VAULT_ASSET_NAME");
+        string memory chainName = vm.envString("GROVE_VAULT_CHAIN_NAME");
+        string memory assetName = vm.envString("GROVE_VAULT_ASSET_NAME");
         string memory fileSlug  = string(abi.encodePacked(
             chainName,
             "-",
@@ -64,12 +64,12 @@ contract DeploySparkVaultProxy is Script {
         string  memory name   = inputConfig.readString(".name");
         string  memory symbol = inputConfig.readString(".symbol");
 
-        // Deploy SparkVault proxy
+        // Deploy GroveVault proxy
         vm.startBroadcast();
-        SparkVault proxy = SparkVault(address(new ERC1967Proxy(
+        GroveVault proxy = GroveVault(address(new ERC1967Proxy(
             impl,
             abi.encodeCall(
-                SparkVault.initialize,
+                GroveVault.initialize,
                 (asset, name, symbol, admin)
             )
         )));
@@ -97,7 +97,7 @@ contract DeploySparkVaultProxy is Script {
         require(proxy.depositCap() == 0,               "depositCap");
 
         // Log
-        console2.log("Deployed SparkVault proxy:");
+        console2.log("Deployed GroveVault proxy:");
         console2.log("  proxy: ",     address(proxy));
         console2.log("  impl:  ",     impl);
         console2.log("  chainName: ", chainName);

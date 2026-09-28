@@ -1,17 +1,17 @@
-# Spark Vaults V2
+# Grove Vaults V2
 
-![Foundry CI](https://github.com/sparkdotfi/spark-vaults-v2/actions/workflows/merge.yml/badge.svg)
+![Foundry CI](https://github.com/grove-labs/grove-vaults-v2/actions/workflows/merge.yml/badge.svg)
 [![Foundry][foundry-badge]][foundry]
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://github.com/sparkdotfi/spark-vaults-v2/blob/master/LICENSE)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](./LICENSE)
 
 [foundry]: https://getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 
 ## Overview
 
-Spark Vaults V2 is an ERC4626-compliant yield-bearing vault that implements a continuous rate accumulation mechanism. Users can deposit assets and earn yields through the Vault Savings Rate (VSR), with all interest automatically compounded into their share value. The value created in this vault comes from the ability of a permissioned actor (`TAKER_ROLE`, which is set to be the Spark Liquidity Layer) to pull liquidity and deploy it into yield bearing strategies, and then `transfer` the assets back into the vault to maintain liquidity for withdrawals. The value that this actor owes to the vault at any given time is `assetsOutstanding() = totalAssets() - asset.balanceOf(address(this))`.
+Grove Vaults V2 is an ERC4626-compliant yield-bearing vault that implements a continuous rate accumulation mechanism. Users can deposit assets and earn yields through the Vault Savings Rate (VSR), with all interest automatically compounded into their share value. The value created in this vault comes from the ability of a permissioned actor (`TAKER_ROLE`, which is set to be the Grove Liquidity Layer) to pull liquidity and deploy it into yield bearing strategies, and then `transfer` the assets back into the vault to maintain liquidity for withdrawals. The value that this actor owes to the vault at any given time is `assetsOutstanding() = totalAssets() - asset.balanceOf(address(this))`.
 
-Spark Vaults V2 is a fork of sUSDS, sharing much of the same functionality. The key differences between these two contracts are:
+Grove Vaults V2 is a modified fork of [Spark Vaults V2](https://github.com/sparkdotfi/spark-vaults-v2), forked from commit [`51c6d7a1da85944804ba87234f2eac13dba8330e`](https://github.com/sparkdotfi/spark-vaults-v2/commit/51c6d7a1da85944804ba87234f2eac13dba8330e) on 2026-06-04. Spark Vaults V2 is itself a fork of sUSDS and shares much of its functionality. The key differences from sUSDS are:
 - Using OZ AccessControl instead of `rely/deny` and `wards`.
 - Introducing new roles:
   - `DEFAULT_ADMIN_ROLE`: Can upgrade the implementation and set `vsr` bounds.
@@ -56,10 +56,10 @@ Note that `totalAssets()` has no relation to the current balance of the contract
 ### Contract Structure
 
 ```
-SparkVault
+GroveVault
 ├── AccessControlEnumerableUpgradeable
 ├── UUPSUpgradeable
-└── ISparkVault (IERC20Permit + IERC4626)
+└── IGroveVault (IERC20Permit + IERC4626)
 ```
 
 ## Installation & Setup
@@ -80,6 +80,10 @@ forge build
 ```bash
 forge test
 ```
+
+## Audits
+
+The `audits/upstream/` directory contains audit reports for [Spark Vaults V2](https://github.com/sparkdotfi/spark-vaults-v2), the upstream project from which Grove Vaults V2 is forked. These audits cover the `SparkVault` contract, not `GroveVault`.
 
 ---
 

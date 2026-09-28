@@ -6,9 +6,9 @@ import { Test } from "forge-std/Test.sol";
 import { ERC20Mock as MockERC20 } from "@openzeppelin/contracts/mocks/token/ERC20Mock.sol";
 import { ERC1967Proxy }           from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-import { SparkVault } from "../src/SparkVault.sol";
+import { GroveVault } from "../src/GroveVault.sol";
 
-contract SparkVaultTestBase is Test {
+contract GroveVaultTestBase is Test {
 
     uint256 constant ONE_PCT_VSR  = 1.000000000315522921573372069e27;
     uint256 constant FOUR_PCT_VSR = 1.000000001243680656318820312e27;
@@ -23,17 +23,17 @@ contract SparkVaultTestBase is Test {
     bytes32 TAKER_ROLE         = keccak256("TAKER_ROLE");
 
     MockERC20  asset;
-    SparkVault vault;
+    GroveVault vault;
 
     function setUp() public virtual {
         asset = new MockERC20();
 
-        vault = SparkVault(
+        vault = GroveVault(
             address(new ERC1967Proxy(
-                address(new SparkVault()),
+                address(new GroveVault()),
                 abi.encodeCall(
-                    SparkVault.initialize,
-                    (address(asset), "Spark Savings USDC V2", "spUSDC", admin)
+                    GroveVault.initialize,
+                    (address(asset), "Grove Savings USDC V2", "grUSDC", admin)
                 )
             ))
         );
