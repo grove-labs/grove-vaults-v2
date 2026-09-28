@@ -11,9 +11,6 @@
   "lib/openzeppelin-contracts-upgradeable": {
     "rev": "e725abddf1e01cf05ace496e950fc8e243cc7cab"
   },
-  "lib/grove-address-registry": {
-    "rev": "09b15282ea178568a50503219146d3b14f0c0ba9"
-  },
   "lib/token-tests": {
     "rev": "6bdd5a38586970acf27166c3205093fd3450d530"
   }

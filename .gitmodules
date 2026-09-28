@@ -13,6 +13,3 @@
 [submodule "lib/dss-test"]
 	path = lib/dss-test
 	url = https://github.com/makerdao/dss-test
-[submodule "lib/grove-address-registry"]
-	path = lib/grove-address-registry
-	url = https://github.com/grove-labs/grove-address-registry
